@@ -10,16 +10,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // ------------- GEMENI SETUP ------------- //
 
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
+const { GoogleGenAI } =  require("@google/genai");
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
 // ------------- ENDPOINTS ------------- //
 
 // Basic route
 app.get("/", async (req, res) => {
-  const geminiApiKey = process.env.GEMINI_API;
-  const genAI = new GoogleGenerativeAI(geminiApiKey);  // init
-  const modelList = await genAI.listModels();
-  console.log("Available models:", modelList);
+  const response = await ai.models.generateContent({
+    model: "gemini-2.0-flash",
+    contents: "Explain how AI works",
+  });
+  console.log(response.text);
+
 
   // const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
