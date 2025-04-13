@@ -9,11 +9,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const multer = require("multer");
 const fs = require("fs");
-const upload = multer({ dest: "uploads/" });
-// ------------- GEMENI SETUP ------------- //
 
+
+// ------------- GEMENI SETUP ------------- //
 const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
+
 
 // ------------- HELPER METHODS ------------- //
 async function respondFromPrompt(contents) {
@@ -33,28 +34,74 @@ async function respondFromAudioAndText(filePath, promptText) {
     const fileData = fs.readFileSync(filePath, { encoding: "base64" });
     const contents = [
       { text: promptText },
-      { inlineData: { mimeType: "audio/mp3", data: fileData } }
+      { inlineData: { mimeType: "audio/mp3", data: fileData } },
     ];
-    return await generateGeminiResponse(contents);
+    return await respondFromPrompt(contents);
   } catch (error) {
-    return { 
-      success: false, 
-      error: `Error processing audio file: ${error.message || "Unknown error"}` 
+    return {
+      success: false,
+      error: `Error processing audio file: ${error.message || "Unknown error"}`,
     };
   }
 }
-// ------------- ENDPOINTS ------------- //
 
+async function respondFromImageAndText(filePath, promptText) {
+  try {
+    const fileData = fs.readFileSync(filePath, { encoding: "base64" });
+    const contents = [
+      { text: promptText },
+      { inlineData: { mimeType: "image/jpeg", data: fileData } }, // Adjust mimeType if needed
+    ];
+
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents,
+    });
+
+    return { success: true, data: response.text };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Error processing image file: ${error.message || "Unknown error"}`,
+    };
+  }
+}
+
+async function respondFromVideoAndText(filePath, promptText) {
+  try {
+    const fileData = fs.readFileSync(filePath, { encoding: "base64" });
+    const contents = [
+      { text: promptText },
+      { inlineData: { mimeType: "video/mp4", data: fileData } }, // Adjust mimeType as needed
+    ];
+
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents,
+    });
+
+    return { success: true, data: response.text };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Error processing video file: ${error.message || "Unknown error"}`,
+    };
+  }
+}
+
+
+// ------------- ENDPOINTS ------------- //
 app.get("/", (req, res) => {
   res.send(`
     Hello World!<br>
     <a href="/text">Go to /text to see the text response</a><br>
     <a href="/audio">Go to /audio to see the audio response</a><br>
-    <a href="/vision">Go to /vision to see the vision response</a>
+    <a href="/image">Go to /image to see the image response</a><br>
+    <a href="/video">Go to /video to see the video response</a><br>
+
   `);
 });
 
-// Basic route
 app.get("/text", async (req, res) => {
   const promptText = "Say hello world from Gemini!";
   const result = await respondFromPrompt(promptText);
@@ -62,9 +109,23 @@ app.get("/text", async (req, res) => {
 });
 
 app.get("/audio", async (req, res) => {
-  const filePath = "uploads/Testing_gemini.mp3";
+  const filePath = "uploads/sample_audio.mp3";
   const promptText = "Describe what people are saying around me";
   const result = await respondFromAudioAndText(filePath, promptText);
+  res.status(result.success ? 200 : 500).json(result);
+});
+
+app.get("/image", async (req, res) => {
+  const filePath = "uploads/sample_image.jpg"; // replace with your test image path
+  const promptText = "tell me about this image. concise";
+  const result = await respondFromImageAndText(filePath, promptText);
+  res.status(result.success ? 200 : 500).json(result);
+});
+
+app.get("/video", async (req, res) => {
+  const filePath = "uploads/sample_video.mp4"; // replace with your test image path
+  const promptText = "tell me about this video. concise";
+  const result = await respondFromVideoAndText(filePath, promptText);
   res.status(result.success ? 200 : 500).json(result);
 });
 
