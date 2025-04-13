@@ -2,8 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
+const API = "http://10.232.192.233:3000";
+import { useLocalSearchParams } from "expo-router";
 
 export default function CameraScreen() {
+  const { quest } = useLocalSearchParams();
+
   const [permission, requestPermission] = useCameraPermissions();
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const cameraRef = useRef<CameraView | null>(null);
@@ -31,9 +35,35 @@ export default function CameraScreen() {
     setCapturedPhoto(null);
   };
 
-  // Placeholder for the right action button
-  const handleRightAction = () => {
-    console.log("Right action pressed. Function not defined yet.");
+  const submitPhoto = async () => {
+    console.log(quest);
+    if (!capturedPhoto) {
+      console.warn("No photo to submit.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("photo", {
+        uri: capturedPhoto,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      } as any); // `as any` helps avoid React Native type complaints
+      formData.append("quest", quest.toString());
+
+      const response = await fetch(`${API}/upload`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const data = await response.json();
+      console.log("Server response:", data);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    }
   };
 
   return (
@@ -62,10 +92,7 @@ export default function CameraScreen() {
             <TouchableOpacity style={styles.captureButtonDisabled}>
               <Ionicons name="camera" size={36} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleRightAction}
-              style={styles.sideButton}
-            >
+            <TouchableOpacity onPress={submitPhoto} style={styles.sideButton}>
               <Ionicons name="checkmark-circle" size={36} color="white" />
             </TouchableOpacity>
           </>
