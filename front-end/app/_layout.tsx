@@ -43,7 +43,8 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name='index' options={{ headerShown: false }} />
-      <Stack.Screen name='disabilityQuestion' options={{ headerShown: false }} />
+      <Stack.Screen name='nameQuestion' options={{ headerShown: false }} />
+      <Stack.Screen name='quiz' options={{ headerShown: false }} />
       <Stack.Screen name='(tabs)' options={{ headerShown: false, gestureEnabled: false }} />
     </Stack>
   );
