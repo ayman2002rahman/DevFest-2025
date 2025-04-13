@@ -1,9 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import { useScavengerHuntContext } from "@/contexts/ScavengerHuntProvider";
 
 export default function Successful() {
   const router = useRouter();
+  const { currentIndex, setCurrentIndex } = useScavengerHuntContext();
+
+  const handleChange = () => {
+    setCurrentIndex(prev => prev + 1);
+    router.back();
+  }
 
   return (
     <View style={styles.container}>
@@ -18,7 +25,7 @@ export default function Successful() {
       <Text style={styles.description}>
         Yay, that is the correct image! You are able to continue.
       </Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.back()}>
+      <TouchableOpacity style={styles.button} onPress={handleChange}>
         <Text style={styles.buttonText}>Continue</Text>
       </TouchableOpacity>
     </View>
