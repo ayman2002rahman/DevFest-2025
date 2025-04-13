@@ -35,6 +35,7 @@ export default function RootLayout() {
     <ScavengerHuntProvider>
       <Stack>
         <Stack.Screen name='index' options={{ headerShown: false }} />
+        <Stack.Screen name='choice' options={{ headerShown: false }} />
         <Stack.Screen name='location' options={{ headerShown: false }} />
         <Stack.Screen name='(tabs)' options={{ headerShown: false, gestureEnabled: true }} />
       </Stack>
