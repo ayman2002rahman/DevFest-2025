@@ -39,7 +39,7 @@ export default function WelcomeScreen() {
                     <Text
                         className='justify-left'
                     >
-                        {'Koala-fy your \n enviornment \n where your needs \n matter'}
+                        {'Hunt for\n exciting new \n adventures!'}
                     </Text>
                 </View>
             </View>
@@ -47,15 +47,9 @@ export default function WelcomeScreen() {
                 <View className='flex-1 justify-center items-center px-[50px]'>
                     <TouchableOpacity 
                         className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
-                        onPress={() => {router.push('/nameQuestion')}}
-                    >
-                        <Text className='text-white'>Get Started!</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
                         onPress={() => {router.push('/(tabs)')}}
                     >
-                        <Text className='text-white'>Test Cam</Text>
+                        <Text className='text-white'>Get Started!</Text>
                     </TouchableOpacity>
                 </View>
             </View>

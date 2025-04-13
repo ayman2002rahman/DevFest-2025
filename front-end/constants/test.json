@@ -1,0 +1,25 @@
+{
+    "scavengerHunts": [
+        {
+            "title": "The name of the hunt",
+            "task": "The short description of what the user needs to take a photo of to pass this hunt",
+            "gps": "The exact coordinates ",
+            "radius": "The radius (in feet) of location in which user should be in in order to pass this hunt",
+            "category": "What this hunt relates to. Either one of the following categories: [food, desert, coffee, outdoor, landmark]"
+        },
+        {
+            "title": "The name of the hunt",
+            "task": "The short description of what the user needs to take a photo of to pass this hunt",
+            "gps": "The exact coordinates ",
+            "radius": "The radius of location in which user should be in in order to pass this hunt",
+            "category": "What this hunt relates to. Either one of the following categories: [food, desert, coffee, outdoor, landmark]"
+        },
+        {
+            "title": "The name of the hunt",
+            "task": "The short description of what the user needs to take a photo of to pass this hunt",
+            "gps": "The exact coordinates ",
+            "radius": "The radius of location in which user should be in in order to pass this hunt",
+            "category": "What this hunt relates to. Either one of the following categories: [food, desert, coffee, outdoor, landmark]"
+        }
+    ]
+}

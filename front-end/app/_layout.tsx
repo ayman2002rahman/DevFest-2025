@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { ScavengerHuntContext } from '@/contexts/ScavengerHuntProvider';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -41,11 +42,13 @@ export default function RootLayout() {
   );*/
 
   return (
-    <Stack>
-      <Stack.Screen name='index' options={{ headerShown: false }} />
-      <Stack.Screen name='nameQuestion' options={{ headerShown: false }} />
-      <Stack.Screen name='quiz' options={{ headerShown: false }} />
-      <Stack.Screen name='(tabs)' options={{ headerShown: false, gestureEnabled: false }} />
-    </Stack>
+    <ScavengerHuntContext>
+      <Stack>
+        <Stack.Screen name='index' options={{ headerShown: false }} />
+        <Stack.Screen name='nameQuestion' options={{ headerShown: false }} />
+        <Stack.Screen name='quiz' options={{ headerShown: false }} />
+        <Stack.Screen name='(tabs)' options={{ headerShown: false, gestureEnabled: false }} />
+      </Stack>
+    </ScavengerHuntContext>
   );
 }
