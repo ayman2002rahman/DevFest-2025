@@ -143,17 +143,29 @@ app.post("/upload", upload.single("photo"), async (req, res) => {
 
   const filePath = req.file.path;
   const quest = req.body.quest;
-  const promptText = `Check whether the photo matches the quest. The quest is to find ${quest}`;
+  const promptText = `Answer with ONLY a 'yes' or a 'no'. Check whether the photo matches the quest. The quest is to find ${quest}`;
 
   try {
     const result = await respondFromImageAndText(filePath, promptText);
 
-    // Optional: clean up uploaded file
+    // Assuming result is a string or has a toString method
+    const responseText = result.toString();
+    const correctness =
+      responseText.match(/\b(yes|no)\b/i)?.[0]?.toLowerCase() === "yes";
+
+    // Clean up uploaded file
     fs.unlink(filePath, (err) => {
       if (err) console.error("Error deleting uploaded photo:", err);
     });
 
-    return res.status(result.success ? 200 : 500).json(result);
+    // Create the response object with the correctness value
+    const responseObj = {
+      success: true,
+      result: responseText,
+      correct: correctness,
+    };
+
+    return res.status(200).json(responseObj);
   } catch (error) {
     return res.status(500).json({
       success: false,

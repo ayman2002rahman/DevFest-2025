@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 const API = "http://10.232.192.233:3000";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+// import Toast from 'react-native-root-toast'; // Add this to your imports
 
 export default function CameraScreen() {
+  const router = useRouter();
   const { quest } = useLocalSearchParams();
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -36,11 +38,18 @@ export default function CameraScreen() {
   };
 
   const submitPhoto = async () => {
-    console.log(quest);
     if (!capturedPhoto) {
       console.warn("No photo to submit.");
       return;
     }
+
+    // Toast.show("Photo submitted!", {
+    //   duration: Toast.durations.SHORT,
+    //   position: Toast.positions.BOTTOM,
+    //   shadow: true,
+    //   animation: true,
+    //   hideOnPress: true,
+    // });
 
     try {
       const formData = new FormData();
@@ -60,7 +69,9 @@ export default function CameraScreen() {
       });
 
       const data = await response.json();
-      console.log("Server response:", data);
+      console.log(data);
+      if (data.correct) router.push("./successful");
+      else router.push("./unsuccessful");
     } catch (error) {
       console.error("Upload failed:", error);
     }
