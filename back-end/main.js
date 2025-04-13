@@ -9,12 +9,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const multer = require("multer");
 const fs = require("fs");
-
-
+// const upload = multer({ dest: "uploads/" });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = "uploads";
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir);
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = `${Date.now()}_${file.originalname}`;
+    cb(null, uniqueName);
+  },
+});
+const upload = multer({ storage });
 // ------------- GEMENI SETUP ------------- //
 const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
-
 
 // ------------- HELPER METHODS ------------- //
 async function respondFromPrompt(contents) {
@@ -89,7 +101,6 @@ async function respondFromVideoAndText(filePath, promptText) {
   }
 }
 
-
 // ------------- ENDPOINTS ------------- //
 app.get("/", (req, res) => {
   res.send(`
@@ -102,34 +113,86 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.get("/text", async (req, res) => {
-  const promptText = "Say hello world from Gemini!";
+app.post("/text", async (req, res) => {
+  const promptText = req.body.promptText;
   const result = await respondFromPrompt(promptText);
   res.status(result.success ? 200 : 500).json(result);
 });
 
-app.get("/audio", async (req, res) => {
+app.post("/audio", async (req, res) => {
   const filePath = "uploads/sample_audio.mp3";
   const promptText = "Describe what people are saying around me";
   const result = await respondFromAudioAndText(filePath, promptText);
   res.status(result.success ? 200 : 500).json(result);
 });
 
-app.get("/image", async (req, res) => {
+app.post("/image", async (req, res) => {
   const filePath = "uploads/sample_image.jpg"; // replace with your test image path
   const promptText = "tell me about this image. concise";
   const result = await respondFromImageAndText(filePath, promptText);
   res.status(result.success ? 200 : 500).json(result);
 });
 
-app.get("/video", async (req, res) => {
-  const filePath = "uploads/sample_video.mp4"; // replace with your test image path
-  const promptText = "tell me about this video. concise";
-  const result = await respondFromVideoAndText(filePath, promptText);
-  res.status(result.success ? 200 : 500).json(result);
+app.post("/upload", upload.single("photo"), async (req, res) => {
+  if (!req.file || !req.body.quest) {
+    return res.status(400).json({
+      success: false,
+      error: "Missing photo or quest",
+    });
+  }
+
+  const filePath = req.file.path;
+  const quest = req.body.quest;
+  const promptText = `Check whether the photo matches the quest. The quest is to find ${quest}`;
+
+  try {
+    const result = await respondFromImageAndText(filePath, promptText);
+
+    // Optional: clean up uploaded file
+    fs.unlink(filePath, (err) => {
+      if (err) console.error("Error deleting uploaded photo:", err);
+    });
+
+    return res.status(result.success ? 200 : 500).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Unknown server error during upload.",
+    });
+  }
+});
+
+app.post("/video", upload.single("video"), async (req, res) => {
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, error: "No video file received" });
+  }
+
+  const filePath = req.file.path;
+  const promptText =
+    "Answer any questions the user asks while recording this video";
+
+  try {
+    const result = await respondFromVideoAndText(filePath, promptText);
+
+    // Optional: delete the uploaded file after processing
+    fs.unlink(filePath, (err) => {
+      if (err) console.error("Error deleting file:", err);
+    });
+
+    return res.status(result.success ? 200 : 500).json(result);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ success: false, error: err.message || "Unknown error" });
+  }
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on port ${PORT}`);
 });
