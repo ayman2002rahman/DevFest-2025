@@ -15,16 +15,17 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
 // ------------- ENDPOINTS ------------- //
 
 // Basic route
-app.get("/", async (req, res) => {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: "say hi only",
-  });
-  console.log(response.text);
+app.get("/text", async (req, res) => {
+  console.log(ai.models);
+//   const response = await ai.models.generateContent({
+//     model: "gemini-2.0-flash",
+//     contents: "say hi only",
+//   });
+//   console.log(response.text);
 });
 
 // Example API route
-app.get("/test", (req, res) => {
+app.get("/audio", (req, res) => {
   res.json({
     success: true,
     data: [
