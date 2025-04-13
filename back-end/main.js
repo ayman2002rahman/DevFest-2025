@@ -14,6 +14,35 @@ const upload = multer({ dest: "uploads/" });
 
 const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
+
+// ------------- HELPER METHODS ------------- //
+async function respondFromPrompt(contents) {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents,
+    });
+    return { success: true, data: response.text };
+  } catch (error) {
+    return { success: false, error: error.message || "Unknown error" };
+  }
+}
+
+async function respondFromAudioAndText(filePath, promptText) {
+  try {
+    const fileData = fs.readFileSync(filePath, { encoding: "base64" });
+    const contents = [
+      { text: promptText },
+      { inlineData: { mimeType: "audio/mp3", data: fileData } }
+    ];
+    return await generateGeminiResponse(contents);
+  } catch (error) {
+    return { 
+      success: false, 
+      error: `Error processing audio file: ${error.message || "Unknown error"}` 
+    };
+  }
+}
 // ------------- ENDPOINTS ------------- //
 
 app.get("/", (req, res) => {
@@ -27,53 +56,16 @@ app.get("/", (req, res) => {
 
 // Basic route
 app.get("/text", async (req, res) => {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: "say hi only",
-  });
-  // console.log(response.text);
-  res.json({
-    success: true,
-    data: response.text,
-  });
+  const promptText = "Say hello world from Gemini!";
+  const result = await respondFromPrompt(promptText);
+  res.status(result.success ? 200 : 500).json(result);
 });
 
 app.get("/audio", async (req, res) => {
-  // Hardcoded file path - make sure this file exists!
-  const filePath = 'uploads/Testing_gemini.mp3';
-  
-  try {
-    // Read the audio file data
-    const fileData = fs.readFileSync(filePath, { encoding: "base64" });
-    
-    // Create the contents array for the API call
-    const contents = [
-      { text: "Describe this audio clip" },
-      {
-        inlineData: {
-          mimeType: "audio/mp3",
-          data: fileData,
-        },
-      },
-    ];
-    
-    // Call Gemini API
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: contents,
-    });
-    
-    res.json({
-      success: true,
-      data: response.text,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error processing audio file",
-      error: error.toString(),
-    });
-  }
+  const filePath = "uploads/Testing_gemini.mp3";
+  const promptText = "Describe what people are saying around me";
+  const result = await respondFromAudioAndText(filePath, promptText);
+  res.status(result.success ? 200 : 500).json(result);
 });
 
 // Start server
