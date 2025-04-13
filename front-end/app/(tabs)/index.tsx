@@ -1,33 +1,10 @@
-import { Image, View, SafeAreaView, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native'
+import { Ionicons } from "@expo/vector-icons";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function EnvScanner() {
+export default function QuestScreen() {
     return (
-        <SafeAreaView>
-            <Text>HEllo world</Text>
-        </SafeAreaView>
+        <View className='flex-1 justify-center items-center'>
+            <Text>shows completed filled in circles bit with cool pathway between like a quest map</Text>
+        </View>
     );
-}
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+}; 

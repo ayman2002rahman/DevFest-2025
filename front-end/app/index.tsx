@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Logo from '@/assets/images/sensAI_logo.svg';
+//import Logo from '@/assets/images/sensAI_logo.svg';
 
 
 export default function WelcomeScreen() {
@@ -35,7 +35,7 @@ export default function WelcomeScreen() {
         <View className='flex-1'>
             <View className='flex-1 justify-center items-center'>
                 <View>
-                    <Logo/>
+                    {/*<Logo/>*/}
                     <Text
                         className='justify-left'
                     >
@@ -47,7 +47,7 @@ export default function WelcomeScreen() {
                 <View className='flex-1 justify-center items-center px-[50px]'>
                     <TouchableOpacity 
                         className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
-                        onPress={() => {router.push('/(tabs)')}}
+                        onPress={() => {router.push('/location')}}
                     >
                         <Text className='text-white'>Get Started!</Text>
                     </TouchableOpacity>

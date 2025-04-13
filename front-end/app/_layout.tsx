@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { ScavengerHuntContext } from '@/contexts/ScavengerHuntProvider';
+import { ScavengerHuntProvider } from '@/contexts/ScavengerHuntProvider';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -30,25 +30,14 @@ export default function RootLayout() {
     return null;
   }
 
-  /*
+  // make sure to change gestureEnabled to false for tabs
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );*/
-
-  return (
-    <ScavengerHuntContext>
+    <ScavengerHuntProvider>
       <Stack>
         <Stack.Screen name='index' options={{ headerShown: false }} />
-        <Stack.Screen name='nameQuestion' options={{ headerShown: false }} />
-        <Stack.Screen name='quiz' options={{ headerShown: false }} />
-        <Stack.Screen name='(tabs)' options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name='location' options={{ headerShown: false }} />
+        <Stack.Screen name='(tabs)' options={{ headerShown: false, gestureEnabled: true }} />
       </Stack>
-    </ScavengerHuntContext>
+    </ScavengerHuntProvider>
   );
 }

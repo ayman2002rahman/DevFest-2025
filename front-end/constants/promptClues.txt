@@ -1,0 +1,26 @@
+The user provides a location input (can be a campus, city, inside an amusement park) Generate a scavenger hunt around the campus of Washington University in St. Louis. The places should either be landmarks, food spots, or activity places. Give a total of 3 spots to go to for this scavenger hunt. Let each spot be considered as a "hunt". For each hunt, provide the name of place/landmark, engaging clue/riddle, exact gps coordinates, and radius. Each should have a specific name to it. Output the response in JSON like this:
+
+{
+    "scavengerHunts": [
+        {
+            "name": "The name of the hunt",
+            "clue": "The short description of what the user needs to take a photo of to pass this hunt",
+            "gps": "The exact coordinates ",
+            "radius": "The radius of location in which user should be in in order to pass this hunt",
+        },
+        {
+            "name": "The name of the hunt",
+            "clue": "The short description of what the user needs to take a photo of to pass this hunt",
+            "gps": "The exact coordinates ",
+            "radius": "The radius of location in which user should be in in order to pass this hunt",
+        },
+        {
+            "name": "The name of the hunt",
+            "clue": "The short description of what the user needs to take a photo of to pass this hunt",
+            "gps": "The exact coordinates ",
+            "radius": "The radius of location in which user should be in in order to pass this hunt",
+        }
+    ]
+}
+
+Here is the user location input: "Washington University Campus"
