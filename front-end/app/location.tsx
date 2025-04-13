@@ -86,7 +86,7 @@ export default function LocationScreen() {
   };
 
   return (
-    <View className='flex-1'>
+    <View className='flex-1 bg-[#9853D7]'>
         <Background
           style={{
             position: 'absolute',
@@ -97,9 +97,11 @@ export default function LocationScreen() {
           }}
         />
       <SafeAreaView className='flex-1'>
-        <Text className='py-[50px] text-bold text-[36px] pl-[10px]'>
-          Where would you like to explore today?
-        </Text>
+        <View className='mt-[100px]'>
+          <Text className='py-[50px] w-[300px] text-bold pl-[25px] text-[#F9F8F5] text-[34px] font-bold font-[Verdana] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
+            Where would you like to explore today?
+          </Text>
+        </View>
         <View className='w-full px-[20px]'>
           <TextField
             placeholder="Enter location"
@@ -107,8 +109,8 @@ export default function LocationScreen() {
             onChangeText={setLocation}
             value={location}
             fieldStyle={{
-              borderBottomWidth: 1,
-              borderBottomColor: '#9E9E9E',
+              borderBottomWidth: 5,
+              borderBottomColor: 'white',
               paddingVertical: 5,
             }}
             containerStyle={{
@@ -120,14 +122,14 @@ export default function LocationScreen() {
         <View className='absolute bottom-[65px] w-full'>
           <View className='flex-1 justify-center items-center px-[50px]'>
             <TouchableOpacity
-              className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
+              className='flex justify-center items-center w-full bg-yellow py-[20px] rounded-full'
               onPress={handlePress}
               disabled={loading}
             >
               {loading ? (
                 <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
-                <Text className='text-white'>Adventure Time!</Text>
+                <Text className='text-textPurple font-[Verdana] text-[22px] font-bold leading-normal'>Adventure Time!</Text>
               )}
             </TouchableOpacity>
           </View>
