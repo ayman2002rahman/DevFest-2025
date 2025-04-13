@@ -11,6 +11,7 @@ export default function WelcomeScreen() {
     const [onboarded, setOnboarded] = useState<boolean | null>(null);
 
     useEffect(() => {
+        //TESTING TABAR, REMOVE WHEN FINISHED
         const checkOnboardingStatus = async () => {
             try {
                 const value = await AsyncStorage.getItem('@onboarded');
@@ -50,6 +51,12 @@ export default function WelcomeScreen() {
                         onPress={() => {router.push('/location')}}
                     >
                         <Text className='text-white'>Get Started!</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
+                        onPress={() => {router.push('/(tabs)')}}
+                    >
+                        <Text className='text-white'>TEST!</Text>
                     </TouchableOpacity>
                 </View>
             </View>
