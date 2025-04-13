@@ -51,6 +51,12 @@ export default function WelcomeScreen() {
                     >
                         <Text className='text-white'>Get Started!</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity 
+                        className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
+                        onPress={() => {router.push('/(tabs)')}}
+                    >
+                        <Text className='text-white'>Test Cam</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
