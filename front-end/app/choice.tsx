@@ -28,28 +28,37 @@ export default function ChoiceScreen() {
                         Name, choose your path wisely
                     </Text>
                     <View className='flex flex-row gap-[30px]'>
-                        <TouchableOpacity className='w-fill h-fill'>
+                        <TouchableOpacity 
+                            className='w-fill h-fill flex justify-center items-center gap-[10px]'
+                            onPress={() => {router.push('/(tabs)')}}
+                        >
                             <Image 
                                 source={require('@/assets/images/glass.png')}
                                 style={{ width: 150, height: 150 }}
                             />
+                            <Text>Accessibility</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className='w-fill h-fill'>
+                        <TouchableOpacity 
+                            className='w-fill h-fill flex justify-center items-center gap-[10px]'
+                            onPress={() => {router.push('/location')}}
+                        >
                             <Image 
                                 source={require('@/assets/images/clock.png')}
                                 style={{ width: 150, height: 150 }}
                             />
+                            <Text>Adventure</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
                 <View className='absolute bottom-[65px] w-full'>
                     <View className='flex-1 justify-center items-center px-[50px]'>
+                        {/*
                         <TouchableOpacity 
                             className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
                             onPress={() => {router.push('/location')}}
                         >
                             <Text className='text-white'>Get Started!</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity>*/}
                     </View>
                 </View>
             </View>

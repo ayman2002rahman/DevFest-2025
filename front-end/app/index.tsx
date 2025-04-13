@@ -58,7 +58,7 @@ export default function WelcomeScreen() {
                     <View className='flex-1 justify-center items-center px-[50px]'>
                         <TouchableOpacity 
                             className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
-                            onPress={() => {router.push('/choice')}}
+                            onPress={() => {router.push('/name')}}
                         >
                             <Text className='text-white'>Get Started!</Text>
                         </TouchableOpacity>
