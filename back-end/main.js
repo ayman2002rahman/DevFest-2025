@@ -7,11 +7,42 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+const multer = require("multer");
+const fs = require("fs");
+const upload = multer({ dest: "uploads/" });
 // ------------- GEMENI SETUP ------------- //
 
 const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
+
+// ------------- HELPER METHODS ------------- //
+async function respondFromPrompt(contents) {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents,
+    });
+    return { success: true, data: response.text };
+  } catch (error) {
+    return { success: false, error: error.message || "Unknown error" };
+  }
+}
+
+async function respondFromAudioAndText(filePath, promptText) {
+  try {
+    const fileData = fs.readFileSync(filePath, { encoding: "base64" });
+    const contents = [
+      { text: promptText },
+      { inlineData: { mimeType: "audio/mp3", data: fileData } }
+    ];
+    return await generateGeminiResponse(contents);
+  } catch (error) {
+    return { 
+      success: false, 
+      error: `Error processing audio file: ${error.message || "Unknown error"}` 
+    };
+  }
+}
 // ------------- ENDPOINTS ------------- //
 
 app.get("/", (req, res) => {
@@ -25,19 +56,17 @@ app.get("/", (req, res) => {
 
 // Basic route
 app.get("/text", async (req, res) => {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: "say hi only",
-  });
-  // console.log(response.text);
-  res.json({
-    success: true,
-    data: response.text,
-  });
+  const promptText = "Say hello world from Gemini!";
+  const result = await respondFromPrompt(promptText);
+  res.status(result.success ? 200 : 500).json(result);
 });
 
-// Example API route
-app.get("/audio", (req, res) => {});
+app.get("/audio", async (req, res) => {
+  const filePath = "uploads/Testing_gemini.mp3";
+  const promptText = "Describe what people are saying around me";
+  const result = await respondFromAudioAndText(filePath, promptText);
+  res.status(result.success ? 200 : 500).json(result);
+});
 
 // Start server
 app.listen(PORT, () => {
