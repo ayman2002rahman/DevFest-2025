@@ -10,11 +10,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const multer = require("multer");
 const fs = require("fs");
 
-
 // ------------- GEMENI SETUP ------------- //
 const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
-
 
 // ------------- HELPER METHODS ------------- //
 async function respondFromPrompt(contents) {
@@ -89,7 +87,6 @@ async function respondFromVideoAndText(filePath, promptText) {
   }
 }
 
-
 // ------------- ENDPOINTS ------------- //
 app.get("/", (req, res) => {
   res.send(`
@@ -102,27 +99,27 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.get("/text", async (req, res) => {
-  const promptText = "Say hello world from Gemini!";
+app.post("/text", async (req, res) => {
+  const promptText = req.body.promptText;
   const result = await respondFromPrompt(promptText);
   res.status(result.success ? 200 : 500).json(result);
 });
 
-app.get("/audio", async (req, res) => {
+app.post("/audio", async (req, res) => {
   const filePath = "uploads/sample_audio.mp3";
   const promptText = "Describe what people are saying around me";
   const result = await respondFromAudioAndText(filePath, promptText);
   res.status(result.success ? 200 : 500).json(result);
 });
 
-app.get("/image", async (req, res) => {
+app.post("/image", async (req, res) => {
   const filePath = "uploads/sample_image.jpg"; // replace with your test image path
   const promptText = "tell me about this image. concise";
   const result = await respondFromImageAndText(filePath, promptText);
   res.status(result.success ? 200 : 500).json(result);
 });
 
-app.get("/video", async (req, res) => {
+app.post("/video", async (req, res) => {
   const filePath = "uploads/sample_video.mp4"; // replace with your test image path
   const promptText = "tell me about this video. concise";
   const result = await respondFromVideoAndText(filePath, promptText);
@@ -130,6 +127,9 @@ app.get("/video", async (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
