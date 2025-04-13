@@ -45,7 +45,7 @@ export default function ChoiceScreen() {
             <TouchableOpacity
               className="w-fill h-fill flex justify-center items-center gap-[10px]"
               onPress={() => {
-                router.push('/(tabs)');
+                router.push('/accessibility');
               }}
             >
               <Image

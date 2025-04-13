@@ -8,8 +8,10 @@ export default function QuestScreen() {
 
     return (
         <View className="flex-1">
-          <MapBackground currentIndex={0} />
-          {/* other screen content */}
+          <View className='mt-[30px]'>
+            <MapBackground currentIndex={2} />
+            {/* other screen content */}
+          </View>
         </View>
     );
 }; 
