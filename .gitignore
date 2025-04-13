@@ -3,3 +3,4 @@ back-end/package-lock.json
 back-end/.env
 back-end/.env
 back-end/main.js
+front-end/.env
