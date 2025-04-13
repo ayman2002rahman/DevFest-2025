@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
-import { ImageBackground, View, Text } from 'react-native';
+import { ImageBackground, View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Background from '../assets/backgrounds/quiz_bg.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 export default function QuizScreen() {
+    const router = useRouter();
+
     const [name, setName] = useState<string | null>('');
 
     useEffect(() => {
@@ -19,7 +23,7 @@ export default function QuizScreen() {
     }, [])
 
     return (
-        <View className='flex-1 bg-[#334CCA]'>
+        <View className='flex-1 bg-blue'>
             <Background
                 style={{ 
                     position: 'absolute', 
@@ -45,6 +49,19 @@ export default function QuizScreen() {
                     <Text className='text-white italic text-[24px]'>
                         Accessibility
                     </Text>
+                </View>
+            </View>
+            <View className='absolute bottom-[65px] w-full'>
+                <View className='flex-1 justify-center items-center px-[50px]'>
+                    <TouchableOpacity 
+                        className='flex justify-center items-center w-full bg-yellow py-[20px] rounded-full'
+                        onPress={() => {router.push('/nameQuestion')}}
+                    >
+                        <View className='flex flex-row justify-center items-center gap-[8px]'>
+                            <Text className='text-blue font-extrabold text-[22px]'>START</Text>
+                            <Ionicons name='chevron-forward' size={24} color='blue'/>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
