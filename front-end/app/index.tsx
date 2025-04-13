@@ -1,5 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import Logo from '@/assets/images/sensAI_logo.svg'; 
 
 export default function WelcomeScreen() {
     const router = useRouter();
@@ -7,7 +8,7 @@ export default function WelcomeScreen() {
     return (
         <View className='flex-1'>
             <View className='flex-1 justify-center items-center'>
-                <Text>Welcome to our app!</Text>
+                <Logo/>
             </View>
             <View className='absolute bottom-[65px] w-full'>
                 <View className='flex-1 justify-center items-center px-[50px]'>
