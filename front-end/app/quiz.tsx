@@ -1,9 +1,28 @@
 import { useState, useEffect } from 'react';
-import { ImageBackground, View, Text, TouchableOpacity } from 'react-native';
+import { ImageBackground, View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Background from '../assets/backgrounds/quiz_bg.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+
+// list of components (represented as functions)
+const slides = [
+    () => {
+        return (
+            <View></View>
+        );
+    },
+    () => {
+        return (
+            <View></View>
+        );
+    },
+    () => {
+        return (
+            <View></View>
+        );
+    },
+]
 
 export default function QuizScreen() {
     const router = useRouter();
@@ -13,7 +32,7 @@ export default function QuizScreen() {
     useEffect(() => {
         const getName = async () => {
             try {
-                const value = await AsyncStorage.getItem('@onboarded');
+                const value = await AsyncStorage.getItem('@name');
                 setName(value);
             } catch (error) {
                 console.log(error);
@@ -33,7 +52,15 @@ export default function QuizScreen() {
                     height: '100%' 
                 }}
             />
-            <View className='flex-1 justify-center items-center gap-[45px]'>
+            <View className='flex-1 justify-center pl-[100px] gap-[45px]'>
+                <View className='text-left'>
+                    <Text className='text-white font-bold text-[34px]'>
+                        Welcome
+                    </Text>
+                    <Text className='text-white font-bold text-[34px]'>
+                        {name}
+                    </Text>
+                </View>
                 <View className='text-left'>
                     <Text className='text-white font-bold text-[34px]'>
                         Know your

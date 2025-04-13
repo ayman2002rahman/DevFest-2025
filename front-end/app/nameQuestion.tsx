@@ -12,7 +12,7 @@ export default function DisabilityQuestionScreen() {
     const hanldleButton = () => {
         const saveName = async () => {
             try {
-                await AsyncStorage.setItem('@onboarded', 'true');
+                await AsyncStorage.setItem('@name', name);
             } catch (error) {
                 console.log(error);
             }
