@@ -10,30 +10,34 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // ------------- GEMENI SETUP ------------- //
 
-const { GoogleGenAI } =  require("@google/genai");
+const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
 // ------------- ENDPOINTS ------------- //
 
+app.get("/", (req, res) => {
+  res.send(`
+    Hello World!<br>
+    <a href="/text">Go to /text to see the text response</a><br>
+    <a href="/audio">Go to /audio to see the audio response</a><br>
+    <a href="/vision">Go to /vision to see the vision response</a>
+  `);
+});
+
 // Basic route
-app.get("/", async (req, res) => {
+app.get("/text", async (req, res) => {
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
     contents: "say hi only",
   });
-  console.log(response.text);
+  // console.log(response.text);
+  res.json({
+    success: true,
+    data: response.text,
+  });
 });
 
 // Example API route
-app.get("/test", (req, res) => {
-  res.json({
-    success: true,
-    data: [
-      { id: 1, name: "Item 1" },
-      { id: 2, name: "Item 2" },
-      { id: 3, name: "Item 3" },
-    ],
-  });
-});
+app.get("/audio", (req, res) => {});
 
 // Start server
 app.listen(PORT, () => {
