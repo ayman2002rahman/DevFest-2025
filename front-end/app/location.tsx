@@ -4,6 +4,7 @@ import { TextField } from 'react-native-ui-lib';
 import { useRouter } from 'expo-router';
 import { useScavengerHuntContext } from '@/contexts/ScavengerHuntProvider';
 import { GoogleGenAI } from '@google/genai';
+import Background from '@/assets/backgrounds/purple_bg.svg';
 
 // Replace with your actual API key
 const ai = new GoogleGenAI({ apiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY });
@@ -85,42 +86,53 @@ export default function LocationScreen() {
   };
 
   return (
-    <SafeAreaView className='flex-1'>
-      <Text className='py-[50px] text-bold text-[36px] pl-[10px]'>
-        Where would you like to explore today?
-      </Text>
-      <View className='w-full px-[20px]'>
-        <TextField
-          placeholder="Enter location"
-          floatingPlaceholder={false}
-          onChangeText={setLocation}
-          value={location}
-          fieldStyle={{
-            borderBottomWidth: 1,
-            borderBottomColor: '#9E9E9E',
-            paddingVertical: 5,
+    <View className='flex-1'>
+        <Background
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
           }}
-          containerStyle={{
-            marginVertical: 10,
-          }}
-          showCharCounter={true}
         />
-      </View>
-      <View className='absolute bottom-[65px] w-full'>
-        <View className='flex-1 justify-center items-center px-[50px]'>
-          <TouchableOpacity
-            className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
-            onPress={handlePress}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
-            ) : (
-              <Text className='text-white'>Adventure Time!</Text>
-            )}
-          </TouchableOpacity>
+      <SafeAreaView className='flex-1'>
+        <Text className='py-[50px] text-bold text-[36px] pl-[10px]'>
+          Where would you like to explore today?
+        </Text>
+        <View className='w-full px-[20px]'>
+          <TextField
+            placeholder="Enter location"
+            floatingPlaceholder={false}
+            onChangeText={setLocation}
+            value={location}
+            fieldStyle={{
+              borderBottomWidth: 1,
+              borderBottomColor: '#9E9E9E',
+              paddingVertical: 5,
+            }}
+            containerStyle={{
+              marginVertical: 10,
+            }}
+            showCharCounter={true}
+          />
         </View>
-      </View>
-    </SafeAreaView>
+        <View className='absolute bottom-[65px] w-full'>
+          <View className='flex-1 justify-center items-center px-[50px]'>
+            <TouchableOpacity
+              className='flex justify-center items-center w-full bg-black py-[20px] rounded-full'
+              onPress={handlePress}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text className='text-white'>Adventure Time!</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
