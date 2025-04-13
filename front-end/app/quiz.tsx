@@ -5,24 +5,18 @@ import Background from '../assets/backgrounds/quiz_bg.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
+import QuizItem from '@/components/QuizItem';
+
+import QuizStart from '@/components/QuizStart';
+import QuizAudio from '@/components/QuizAudio';
+import QuizVisual from '@/components/QuizVisual';
+
 // list of components (represented as functions)
 const slides = [
-    () => {
-        return (
-            <View></View>
-        );
-    },
-    () => {
-        return (
-            <View></View>
-        );
-    },
-    () => {
-        return (
-            <View></View>
-        );
-    },
-]
+    <QuizStart/>,
+    <QuizAudio/>,
+    <QuizVisual/>
+];
 
 export default function QuizScreen() {
     const router = useRouter();
@@ -52,31 +46,19 @@ export default function QuizScreen() {
                     height: '100%' 
                 }}
             />
-            <View className='flex-1 justify-center pl-[100px] gap-[45px]'>
-                <View className='text-left'>
-                    <Text className='text-white font-bold text-[34px]'>
-                        Welcome
-                    </Text>
-                    <Text className='text-white font-bold text-[34px]'>
-                        {name}
-                    </Text>
-                </View>
-                <View className='text-left'>
-                    <Text className='text-white font-bold text-[34px]'>
-                        Know your
-                    </Text>
-                    <Text className='text-white font-bold text-[34px]'>
-                        Disability
-                    </Text>
-                </View>
-                <View className='gap-[10px]'>
-                    <Text className='text-white italic text-[24px]'>
-                        The first step to better
-                    </Text>
-                    <Text className='text-white italic text-[24px]'>
-                        Accessibility
-                    </Text>
-                </View>
+            <View className='flex-1 justify-center items-center pl-[100px] gap-[45px]'>
+                <FlatList 
+                    data={slides} 
+                    renderItem={({ item }) => (
+                        <QuizItem>
+                            {item}
+                        </QuizItem>
+                    )}
+                    horizontal
+                    showsHorizontalScrollIndicator
+                    pagingEnabled
+                    bounces={false}
+                />
             </View>
             <View className='absolute bottom-[65px] w-full'>
                 <View className='flex-1 justify-center items-center px-[50px]'>

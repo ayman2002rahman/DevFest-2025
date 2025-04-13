@@ -20,7 +20,7 @@ export default function QuizStart() {
 
     return (
         <View>
-            <View className='text-left'>
+            <View className='text-left w-screen'>
                     <Text className='text-white font-bold text-[34px]'>
                         Welcome
                     </Text>
