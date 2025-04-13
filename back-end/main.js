@@ -18,27 +18,9 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
 app.get("/", async (req, res) => {
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
-    contents: "Explain how AI works",
+    contents: "say hi only",
   });
   console.log(response.text);
-
-
-  // const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-  // const prompt = "Write me a short poem about coding that rhymes.";
-
-  // const result = await model.generateContent(prompt);
-  // const response = await result.response;
-  // const text = response.text();
-
-
-  // res.json({ 
-  //   success: true, 
-  //   data: {
-  //     prompt: prompt,
-  //     response: text
-  //   }
-  // });
 });
 
 // Example API route
