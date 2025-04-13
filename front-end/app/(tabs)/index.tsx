@@ -1,116 +1,126 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  SafeAreaView,
-  Text,
-  TextInput,
-  TouchableOpacity,
   View,
+  Text,
+  TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import * as FileSystem from "expo-file-system";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-
-// Change this to point to your actual API server
 const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://10.232.192.233:3000";
 
 export default function EnvScanner() {
-  const [inputText, setInputText] = useState("");
+  const cameraRef = useRef<CameraView | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
-  const handleSendText = async () => {
-    if (!inputText.trim()) return;
+  useEffect(() => {
+    if (!permission?.granted) {
+      requestPermission();
+    }
+  }, [permission]);
 
+  const recordVideo = async () => {
+    if (!cameraRef.current) return;
+
+    setIsRecording(true);
+    const video = await cameraRef.current.recordAsync(); // returns { uri: string }
+    setIsRecording(false);
+    if (video) await uploadVideo(video.uri);
+  };
+
+  const stopRecording = () => {
+    if (cameraRef.current && isRecording) {
+      cameraRef.current.stopRecording();
+    }
+  };
+
+  const uploadVideo = async (uri: string) => {
     setIsLoading(true);
+
+    const fileUri = Platform.OS === "ios" ? uri.replace("file://", "") : uri;
+
+    const formData = new FormData();
+    formData.append("video", {
+      uri: fileUri,
+      name: "video.mp4",
+      type: "video/mp4",
+    } as any);
+
     try {
-      // Using the full URL instead of a relative path
-      const response = await fetch(`${API_URL}/text`, {
+      const res = await fetch(`${API_URL}/video`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
-        body: JSON.stringify({ promptText: inputText }),
+        body: formData,
       });
 
-      const result = await response.json();
-      setResponse(result.success ? result.data : "Error: " + result.error);
-    } catch (error) {
+      const result = await res.json();
+      setResponse(result.success ? result.data : `Error: ${result.error}`);
+    } catch (error: any) {
       setResponse("Error: " + error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.titleContainer}>
-        <HelloWave />
-        <ThemedText style={styles.title}>EnvScanner</ThemedText>
-      </View>
-
-      <ThemedView style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={inputText}
-          onChangeText={setInputText}
-          placeholder="Enter your prompt text..."
-          multiline
-        />
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSendText}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText}>
-            {isLoading ? "Sending..." : "Send"}
-          </Text>
+  if (!permission) return <Text>Checking permissions...</Text>;
+  if (!permission.granted)
+    return (
+      <View style={styles.container}>
+        <Text>Camera access required.</Text>
+        <TouchableOpacity onPress={requestPermission}>
+          <Text style={styles.buttonText}>Grant Permission</Text>
         </TouchableOpacity>
-      </ThemedView>
+      </View>
+    );
 
-      {response ? (
-        <ThemedView style={styles.responseContainer}>
-          <ThemedText style={styles.responseTitle}>Response:</ThemedText>
-          <ThemedText style={styles.responseText}>{response}</ThemedText>
-        </ThemedView>
-      ) : null}
-    </SafeAreaView>
+  return (
+    <View style={{ flex: 1, padding: 16 }}>
+      <CameraView
+        ref={cameraRef}
+        style={{ height: 300, borderRadius: 12 }}
+        facing="back"
+        mode="video"
+        enableTorch={false}
+      />
+
+      <TouchableOpacity
+        style={[
+          styles.button,
+          { backgroundColor: isRecording ? "red" : "green" },
+        ]}
+        onPress={isRecording ? stopRecording : recordVideo}
+      >
+        <Text style={styles.buttonText}>
+          {isRecording ? "Stop Recording" : "Record Video"}
+        </Text>
+      </TouchableOpacity>
+
+      {isLoading && <Text style={{ marginTop: 12 }}>Processing video...</Text>}
+
+      {response && (
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ fontWeight: "bold", fontSize: 18 }}>Response:</Text>
+          <Text>{response}</Text>
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    padding: 16,
-    borderRadius: 8,
-    marginTop: 16,
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-    minHeight: 100,
+    justifyContent: "center",
   },
   button: {
-    backgroundColor: "#2196F3",
+    marginTop: 12,
     padding: 16,
     borderRadius: 8,
     alignItems: "center",
@@ -118,28 +128,5 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
-  },
-  responseContainer: {
-    padding: 16,
-    borderRadius: 8,
-  },
-  responseTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  responseText: {
-    fontSize: 16,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
   },
 });

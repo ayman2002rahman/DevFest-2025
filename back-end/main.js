@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const multer = require("multer");
 const fs = require("fs");
+const upload = multer({ dest: "uploads/" });
 
 // ------------- GEMENI SETUP ------------- //
 const { GoogleGenAI } = require("@google/genai");
@@ -119,17 +120,37 @@ app.post("/image", async (req, res) => {
   res.status(result.success ? 200 : 500).json(result);
 });
 
-app.post("/video", async (req, res) => {
-  const filePath = "uploads/sample_video.mp4"; // replace with your test image path
-  const promptText = "tell me about this video. concise";
-  const result = await respondFromVideoAndText(filePath, promptText);
-  res.status(result.success ? 200 : 500).json(result);
+app.post("/video", upload.single("video"), async (req, res) => {
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, error: "No video file received" });
+  }
+
+  const filePath = req.file.path;
+  const promptText =
+    "Answer any questions the user asks while recording this video";
+
+  try {
+    const result = await respondFromVideoAndText(filePath, promptText);
+
+    // Optional: delete the uploaded file after processing
+    fs.unlink(filePath, (err) => {
+      if (err) console.error("Error deleting file:", err);
+    });
+
+    return res.status(result.success ? 200 : 500).json(result);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ success: false, error: err.message || "Unknown error" });
+  }
 });
 
 // Start server
 // app.listen(PORT, () => {
 //   console.log(`Server running on port ${PORT}`);
 // });
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
 });
